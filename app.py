@@ -26,12 +26,9 @@ class Speed:
             print('Teste de velocidade realizado com sucesso.')
             execucao_str = execucao.stdout.decode()
             # print(execucao_str)
-            try:    #Modifica para datatype compatível com Python
-                execucao_str = execucao_str.replace('null', 'None')
-                execucao_str = execucao_str.replace('false', 'False')
-                execucao_str = execucao_str.replace('true', 'True')
-            except:
-                print('Não foram encontrados "null", "false", "true"')
+            execucao_str = execucao_str.replace('null', 'None') #Modifica para datatype compatível com Python
+            execucao_str = execucao_str.replace('false', 'False')   #Modifica para datatype compatível com Python
+            execucao_str = execucao_str.replace('true', 'True') #Modifica para datatype compatível com Python
             execucao_dict = eval(execucao_str)
             # print(execucao_dict)
             self.timestamp = execucao_dict["timestamp"]
@@ -112,7 +109,7 @@ w.writerow(headers)
 csvfile.close()
 
 contador_speedtest = 0
-intervalo = 1800
+intervalo = 900
 
 print(f'Intervalo entre testes: {intervalo} segundos')
 time.sleep(3)
