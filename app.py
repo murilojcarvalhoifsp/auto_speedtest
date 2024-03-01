@@ -1,4 +1,5 @@
 import csv
+import time
 from datetime import datetime
 from subprocess import run, PIPE
 
@@ -32,7 +33,7 @@ class Speed:
             except:
                 print('Não foram encontrados "null", "false", "true"')
             execucao_dict = eval(execucao_str)
-            print(execucao_dict)
+            # print(execucao_dict)
             self.timestamp = execucao_dict["timestamp"]
             self.latency = execucao_dict["ping"]["latency"]
             self.download_Bps = execucao_dict["download"]["bandwidth"]
@@ -104,48 +105,66 @@ versao_speedtest()
 
 now = datetime.now()
 now_txt = now.strftime('%Y%m%d_%H%M')
-headers = ['timestamp', 'latency', 'download_Mbps', 'upload_Mbps', 'isp', 'server_id', 'server_host', 'server_name', 'server_location']
+headers = ['#','timestamp', 'latency(ms)', 'download_Mbps', 'upload_Mbps', 'isp', 'server_id', 'server_host', 'server_name', 'server_location']
 csvfile = open('./CSV/speedtest-'+now_txt+'.csv', 'w')
 w = csv.writer(csvfile, delimiter=';')
 w.writerow(headers)
 csvfile.close()
 
-test1 = Speed()
-test1.speed_test()
+contador_speedtest = 0
+intervalo = 1800
 
-timestamp = test1.get_timestamp()
-print(f'timestamp: {timestamp}')
-latency = test1.get_latency()
-print(f'latencia: {latency} ms')
-download_Bps = test1.get_download_Bps()
-print(f'download: {download_Bps} bytes/s')
-upload_Bps = test1.get_upload_Bps()
-print(f'upload: {upload_Bps} bytes/s')
-download_Mbps = test1.get_download_Mbps()
-print(f'download: {download_Mbps} Mbps')
-upload_Mbps = test1.get_upload_Mbps()
-print(f'upload: {upload_Mbps} Mbps')
-isp = test1.get_isp()
-print(f'isp: {isp}')
-server_id = test1.get_server_id()
-print(f'server_id: {server_id}')
-server_host = test1.get_server_host()
-print(f'server_host: {server_host}')
-server_name = test1.get_server_name()
-print(f'server_name: {server_name}')
-server_location = test1.get_server_location()
-print(f'server_location: {server_location}')
+print(f'Intervalo entre testes: {intervalo} segundos')
+time.sleep(3)
 
-#gambiarra para substituir os '.' por ',' (formato de número pt-BR)
-latency = str(latency)
-latency = latency.replace('.',',')
-download_Mbps = str(download_Mbps)
-download_Mbps = download_Mbps.replace('.',',')
-upload_Mbps = str(upload_Mbps)
-upload_Mbps = upload_Mbps.replace('.',',')
+while(True):
+    contador_speedtest = contador_speedtest + 1
+    print('');
+    print(f'Verificação #{contador_speedtest}')
+    test1 = Speed()
+    test1.speed_test()
 
-speedtest_list = [timestamp, latency, download_Mbps, upload_Mbps, isp, server_id, server_host, server_name, server_location]
-with open('./CSV/speedtest-'+now_txt+'.csv', 'a') as csvfile:
-    a = csv.writer(csvfile, delimiter=';')
-    a.writerow(speedtest_list)
-    csvfile.close()
+    timestamp = test1.get_timestamp()
+    print(f'timestamp: {timestamp}')
+    latency = test1.get_latency()
+    print(f'latencia: {latency} ms')
+    download_Bps = test1.get_download_Bps()
+    print(f'download: {download_Bps} bytes/s')
+    upload_Bps = test1.get_upload_Bps()
+    print(f'upload: {upload_Bps} bytes/s')
+    download_Mbps = test1.get_download_Mbps()
+    print(f'download: {download_Mbps} Mbps')
+    upload_Mbps = test1.get_upload_Mbps()
+    print(f'upload: {upload_Mbps} Mbps')
+    isp = test1.get_isp()
+    print(f'isp: {isp}')
+    server_id = test1.get_server_id()
+    print(f'server_id: {server_id}')
+    server_host = test1.get_server_host()
+    print(f'server_host: {server_host}')
+    server_name = test1.get_server_name()
+    print(f'server_name: {server_name}')
+    server_location = test1.get_server_location()
+    print(f'server_location: {server_location}')
+
+    #gambiarra para substituir os '.' por ',' (formato de número pt-BR)
+    latency = str(latency)
+    latency = latency.replace('.',',')
+    download_Mbps = str(download_Mbps)
+    download_Mbps = download_Mbps.replace('.',',')
+    upload_Mbps = str(upload_Mbps)
+    upload_Mbps = upload_Mbps.replace('.',',')
+
+    speedtest_list = [contador_speedtest, timestamp, latency, download_Mbps, upload_Mbps, isp, server_id, server_host, server_name, server_location]
+    with open('./CSV/speedtest-'+now_txt+'.csv', 'a') as csvfile:
+        a = csv.writer(csvfile, delimiter=';')
+        a.writerow(speedtest_list)
+        csvfile.close()
+
+    #Aguarda próxima verificação
+    print('');
+    for i in range(intervalo):
+        # print(f'Próxima verficação em {intervalo-i} segundos')
+        print("\033[K", f'Próxima verficação em {intervalo-i} segundos', end="\r")
+        time.sleep(1)
+    print('')
