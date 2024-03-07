@@ -7,6 +7,7 @@ class Speed:
     def __init__(self):
         self.timestamp = ''
         self.latency = 0
+        self.jitter = 0
         self.download_Bps = 0
         self.upload_Bps = 0
         self.download_Mbps = 0
@@ -30,9 +31,10 @@ class Speed:
             execucao_str = execucao_str.replace('false', 'False')   #Modifica para datatype compatível com Python
             execucao_str = execucao_str.replace('true', 'True') #Modifica para datatype compatível com Python
             execucao_dict = eval(execucao_str)
-            # print(execucao_dict)
+            print(execucao_dict)
             self.timestamp = execucao_dict["timestamp"]
             self.latency = execucao_dict["ping"]["latency"]
+            self.jitter = execucao_dict["ping"]["jitter"]
             self.download_Bps = execucao_dict["download"]["bandwidth"]
             self.upload_Bps = execucao_dict["upload"]["bandwidth"]
             self.download_Mbps = self.download_Bps/125000
@@ -46,6 +48,7 @@ class Speed:
             print('Falha de conexao.')
             self.timestamp = ''
             self.latency = 0
+            self.jitter = 0
             self.download_Bps = 0
             self.upload_Bps = 0
             self.download_Mbps = 0
@@ -61,6 +64,9 @@ class Speed:
     
     def get_latency(self):
         return self.latency
+    
+    def get_jitter(self):
+        return self.jitter
     
     def get_download_Bps(self):
         return self.download_Bps
@@ -102,7 +108,7 @@ versao_speedtest()
 
 now = datetime.now()
 now_txt = now.strftime('%Y%m%d_%H%M')
-headers = ['#','timestamp', 'latency(ms)', 'download_Mbps', 'upload_Mbps', 'isp', 'server_id', 'server_host', 'server_name', 'server_location']
+headers = ['#', 'dia (dd/mm/aaaa)', 'hora (HH:MM)', 'latency(ms)', 'jitter(ms)', 'download_Mbps', 'upload_Mbps', 'isp', 'server_id', 'server_host', 'server_name', 'server_location']
 csvfile = open('./CSV/speedtest-'+now_txt+'.csv', 'w')
 w = csv.writer(csvfile, delimiter=';')
 w.writerow(headers)
@@ -121,10 +127,18 @@ while(True):
     test1 = Speed()
     test1.speed_test()
 
+    now = datetime.now()
+    now_txt_dia = now.strftime('%d/%m/%Y')
+    print(f'dia: {now_txt_dia}')
+    now_txt_hora = now.strftime('%H:%M')
+    print(f'hora: {now_txt_hora}')
+
     timestamp = test1.get_timestamp()
-    print(f'timestamp: {timestamp}')
+    print(f'speedtest timestamp: {timestamp}')
     latency = test1.get_latency()
     print(f'latencia: {latency} ms')
+    jitter = test1.get_jitter()
+    print(f'jitter: {jitter} ms')
     download_Bps = test1.get_download_Bps()
     print(f'download: {download_Bps} bytes/s')
     upload_Bps = test1.get_upload_Bps()
@@ -147,12 +161,14 @@ while(True):
     #gambiarra para substituir os '.' por ',' (formato de número pt-BR)
     latency = str(latency)
     latency = latency.replace('.',',')
+    jitter = str(jitter)
+    jitter = jitter.replace('.',',')
     download_Mbps = str(download_Mbps)
     download_Mbps = download_Mbps.replace('.',',')
     upload_Mbps = str(upload_Mbps)
     upload_Mbps = upload_Mbps.replace('.',',')
 
-    speedtest_list = [contador_speedtest, timestamp, latency, download_Mbps, upload_Mbps, isp, server_id, server_host, server_name, server_location]
+    speedtest_list = [contador_speedtest, now_txt_dia, now_txt_hora, latency, jitter, download_Mbps, upload_Mbps, isp, server_id, server_host, server_name, server_location]
     with open('./CSV/speedtest-'+now_txt+'.csv', 'a') as csvfile:
         a = csv.writer(csvfile, delimiter=';')
         a.writerow(speedtest_list)
