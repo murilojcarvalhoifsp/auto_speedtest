@@ -102,9 +102,18 @@ def versao_speedtest():
     print('---------------------------------------------------------------------------------')
 
 
-
-
+print('AUTO SPEEDTEST by Murilo Jose de Carvalho')
+print('')
+system_startup_time = 60
+# time.sleep(system_startup_time)  #Time to system startup
+for i in range(system_startup_time): #Time to system startup
+    # print(f'Próxima verficação em {intervalo-i} segundos')
+    print("\033[K", f'Inicia em {system_startup_time-i} segundos', end="\r")
+    time.sleep(1)
+print('---------------------------------------------------------------------------------')
+print('')
 versao_speedtest()
+time.sleep(1)
 
 now = datetime.now()
 now_txt = now.strftime('%Y%m%d_%H%M')
@@ -115,9 +124,10 @@ w.writerow(headers)
 csvfile.close()
 
 contador_speedtest = 0
-intervalo = 900
+intervalo = 900     #900 segundos = 15 minutos
 
 print(f'Intervalo entre testes: {intervalo} segundos')
+print('---------------------------------------------------------------------------------')
 time.sleep(3)
 
 while(True):
